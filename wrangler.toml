@@ -1,0 +1,7 @@
+name = "wk-mail-worker"
+main = "src/index.js"
+compatibility_date = "2026-09-27"
+
+[vars]
+EMAIL_TENANT = "common"
+EMAIL_USER = "watermelonkatana@outlook.com"
