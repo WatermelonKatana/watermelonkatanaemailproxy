@@ -8,14 +8,25 @@ function json(obj, status) {
 let cachedtoken = null;
 let cachedexpiry = 0;
 
+function cleanval(v) {
+  v = (v || "").trim();
+  if (/%[0-9A-Fa-f]{2}/.test(v)) {
+    try {
+      const d = decodeURIComponent(v);
+      if (d) return d;
+    } catch (e) {}
+  }
+  return v;
+}
+
 async function getgraphtoken(env) {
   if (cachedtoken && Date.now() < cachedexpiry) return cachedtoken;
-  const tenant = env.EMAIL_TENANT || "common";
+  const tenant = cleanval(env.EMAIL_TENANT || "common");
   const params = new URLSearchParams();
-  params.set("client_id", env.EMAIL_CLIENT_ID);
-  params.set("client_secret", env.EMAIL_CLIENT_SECRET);
+  params.set("client_id", cleanval(env.EMAIL_CLIENT_ID));
+  params.set("client_secret", cleanval(env.EMAIL_CLIENT_SECRET));
   params.set("grant_type", "refresh_token");
-  params.set("refresh_token", env.EMAIL_REFRESH_TOKEN);
+  params.set("refresh_token", cleanval(env.EMAIL_REFRESH_TOKEN));
   params.set("scope", "offline_access https://graph.microsoft.com/Mail.Send");
   const resp = await fetch("https://login.microsoftonline.com/" + tenant + "/oauth2/v2.0/token", {
     method: "POST",
